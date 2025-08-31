@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Users\UserController;
+use App\Http\Controllers\Api\Tokens\TokenController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+});
+
+ Route::post('/token/generate', [TokenController::class, 'generate']);
+
