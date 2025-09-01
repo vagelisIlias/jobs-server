@@ -11,5 +11,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
 });
 
- Route::post('/token/generate', [TokenController::class, 'generate']);
-
+Route::resources(['/token/generate' => TokenController::class]);

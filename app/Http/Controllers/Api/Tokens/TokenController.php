@@ -14,7 +14,7 @@ use App\Exceptions\Api\Tokens\TokenNotGeneratedException;
 
 class TokenController extends Controller
 {
-    public function generate(Request $request, TokenRequest $tokenRequest): JsonResponse
+    public function store(Request $request, TokenRequest $tokenRequest): JsonResponse
     {
         $tokenRequest->rules();
         $user = User::where('email', $request->email)->first();
