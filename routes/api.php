@@ -9,11 +9,12 @@ use App\Http\Controllers\Api\Tokens\TokenController;
 
 // Check all the users as auth user
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::resources(['/users' => UserController::class]);
+    Route::prefix('v1')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        });
 });
 
-// Generate new token
-Route::resources(['/token/generate' => TokenController::class]);
-
-// Store new users
-Route::resources(['/register' => RegisterUserController::class]);
+Route::prefix('v1')->group(function () {
+    Route::resources(['/token/generate' => TokenController::class]);
+    Route::resources(['/register' => RegisterUserController::class]);
+});

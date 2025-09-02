@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Traits\CreatesAuthToken;
+use App\Models\Enum\UserRole;
+use App\Models\Enum\UserStatus;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,8 +13,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use CreatesAuthToken;
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
@@ -34,6 +33,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $attributes = [
+        'role' => UserRole::User->value,
+        'status' => UserStatus::Active->value,
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -44,6 +48,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'status' => UserStatus::class,
         ];
     }
 }
