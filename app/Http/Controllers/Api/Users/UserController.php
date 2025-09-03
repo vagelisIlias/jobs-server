@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\UserResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller

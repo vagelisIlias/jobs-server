@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Tokens;
 
-use Mockery;
 use Tests\TestCase;
 use App\Models\User;
-use Mockery\MockInterface;
-use Illuminate\Container\Attributes\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Exceptions\Api\Tokens\UserNotFoundException;
-use App\Exceptions\Api\Tokens\TokenNotGeneratedException;
-use Mockery\LegacyMockInterface;
+use App\Exceptions\Tokens\UserNotFoundException;
 
 class TokenControllerTest extends TestCase
 {
@@ -20,6 +16,9 @@ class TokenControllerTest extends TestCase
 
     public function test_it_can_generate_new_token()
     {
+        DB::shouldReceive('beginTransaction')->never();
+        DB::shouldReceive('commit')->never();
+
         $email = 'test@example.com';
         $password = '123';
         $token = 'Test Token';
@@ -35,12 +34,15 @@ class TokenControllerTest extends TestCase
             'token_name' => $token,
         ];
 
-        $response = $this->actingAs($user)->postJson('api/token/generate', $data);
-        $response->assertOk();
+        $response = $this->actingAs($user)->postJson('api/v1/token/generate', $data);
+        $response->assertStatus(200);
+
     }
 
     public function test_it_can_not_find_the_user()
     {
+        DB::shouldReceive('beginTransaction')->never();
+        DB::shouldReceive('commit')->never();
         $this->withoutExceptionHandling();
 
         $data = [
@@ -52,6 +54,6 @@ class TokenControllerTest extends TestCase
         $this->expectException(UserNotFoundException::class);
         $this->expectExceptionMessage('No user found with this email');
 
-        $this->postJson('/api/token/generate', $data);
+        $this->postJson('/api/v1/token/generate', $data);
     }
 }

@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Auth;
 
 use Throwable;
+use App\Mail\UserRegisteredEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\QueryException;
-use App\Http\Resources\Api\UserResource;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\UserResource;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Api\UserRequest\StoreUserRequest;
-use App\Events\Api\UserRegistered\UserRegisteredEventMessage;
-use App\Exceptions\Api\Tokens\GenerateTokenNotFoundException;
 
 class RegisterUserController extends Controller
 {
@@ -29,24 +28,20 @@ class RegisterUserController extends Controller
             $token->accessToken->last_used_at = now();
             $token->accessToken->save();
             DB::commit();
-            UserRegisteredEventMessage::dispatch($user);
-
-            return response()->json([
-                ...new UserResource($user)->toArray($request),
-                'access_token' => $token->plainTextToken,
-                'token_type' => 'Bearer',
-                'expires_at' => $token->accessToken->expires_at->toISOString(),
-            ], Response::HTTP_CREATED);
-
-        } catch (QueryException $e) {
-            return response()->json([
-                'message' => 'Failed to create user',
-                'error'   => $e->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
         } catch (Throwable $e) {
+            DB::rollBack();
             return response()->json([
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
+        Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
+        
+        return response()->json([
+            ...new UserResource($user)->toArray($request),
+            'registration_token' => $token->plainTextToken,
+            'token_type' => 'Bearer',
+            'expires_at' => $token->accessToken->expires_at->toISOString(),
+        ], Response::HTTP_CREATED);
     }
 }
