@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Exceptions\Api\Tokens;
+namespace App\Exceptions\Tokens;
 
 use Exception;
 use Throwable;
