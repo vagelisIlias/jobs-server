@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Auth;
 
 use Throwable;
 use App\Mail\UserRegisteredEmail;
@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\UserResource;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\Api\UserRequest\StoreUserRequest;
+use App\Http\Requests\UserRequest\StoreUserRequest;
 
 class RegisterUserController extends Controller
 {
@@ -36,7 +36,7 @@ class RegisterUserController extends Controller
         }
 
         Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
-        
+
         return response()->json([
             ...new UserResource($user)->toArray($request),
             'registration_token' => $token->plainTextToken,

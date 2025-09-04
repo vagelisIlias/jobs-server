@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Api\Auth;
+namespace Tests\Feature\Auth;
 
 use Exception;
 use Tests\TestCase;
@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Mail\UserRegisteredEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Requests\Api\UserRequest\StoreUserRequest;
+use App\Http\Requests\UserRequest\StoreUserRequest;
 
 class RegisterUserControllerTest extends TestCase
 {
