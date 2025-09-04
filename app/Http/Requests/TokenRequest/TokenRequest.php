@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\TokenRequest;
+namespace App\Http\Requests\TokenRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 

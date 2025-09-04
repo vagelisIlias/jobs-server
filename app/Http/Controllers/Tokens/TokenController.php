@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\Tokens;
+namespace App\Http\Controllers\Tokens;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\Tokens\UserNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Http\Requests\Api\TokenRequest\TokenRequest;
+use App\Http\Requests\TokenRequest\TokenRequest;
 
 class TokenController extends Controller
 {
