@@ -9,39 +9,45 @@ use App\Mail\UserRegisteredEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Requests\UserRequest\StoreUserRequest;
+use App\Http\Requests\RegisterUserRequest\StoreUserRequest;
+use App\ApiResponseTrait\ApiResponseTrait;
+
 
 class RegisterUserController extends Controller
 {
+    use ApiResponseTrait;
+
+    private const SUCCESS = 'Registration was successful';
+    private const TOKEN = 'registration_token';
+    private const FAILED = 'Failed to create user and token';
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): JsonResponse
+    public function register(StoreUserRequest $storeUserRequest): JsonResponse
     {
         DB::beginTransaction();
         try {
-            $user = $request->storeUser();
-            $token = $user->createToken($request->token_name ?? 'registration_token', [], now()->addDays(7));
+            $user = $storeUserRequest->storeUser();
+            $token = $user->createToken($storeUserRequest->token_name ?? self::TOKEN, [], now()->addDays(7));
             $token->accessToken->last_used_at = now();
             $token->accessToken->save();
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
-            return response()->json([
-                'error' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->sendError(self::FAILED, 500, Response::HTTP_INTERNAL_SERVER_ERROR . $e->getMessage());
         }
 
         Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
 
-        return response()->json([
-            ...new UserResource($user)->toArray($request),
+        return $this->sendResponse([
+            ...new UserResource($user)->toArray($storeUserRequest),
             'registration_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
             'expires_at' => $token->accessToken->expires_at->toISOString(),
-        ], Response::HTTP_CREATED);
+        ],self::SUCCESS, Response::HTTP_CREATED);
     }
 }

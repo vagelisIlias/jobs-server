@@ -36,7 +36,6 @@ class TokenControllerTest extends TestCase
 
         $response = $this->actingAs($user)->postJson('api/v1/token/generate', $data);
         $response->assertStatus(200);
-
     }
 
     public function test_it_can_not_find_the_user()

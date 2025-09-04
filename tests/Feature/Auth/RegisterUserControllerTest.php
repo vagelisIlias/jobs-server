@@ -10,7 +10,8 @@ use App\Models\User;
 use App\Mail\UserRegisteredEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Requests\UserRequest\StoreUserRequest;
+use App\Http\Requests\RegisterUserRequest\StoreUserRequest;
+
 
 class RegisterUserControllerTest extends TestCase
 {

@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Auth\RegisterUserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Tokens\TokenController;
+use App\Http\Controllers\Auth\LoginUserController;
+use App\Http\Controllers\Auth\RegisterUserController;
 
-// Check all the users as auth user
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::prefix('v1')->group(function () {
-        Route::get('/users', [UserController::class, 'index']);
-        });
-});
-
-// Route::middleware(['auth:sanctum'])->group(function () {
-//     Route::prefix('v1')->group(function () {
-//         Route::resources(['/login' => LoginUserController::class]);
-//         });
-// });
-
+// Generate Token
 Route::prefix('v1')->group(function () {
     Route::resources(['/token/generate' => TokenController::class]);
-    Route::resources(['/register' => RegisterUserController::class]);
+});
+
+// Register Login user
+Route::prefix('v1')->group(function () {
+    Route::post('/register', [RegisterUserController::class, 'register']);
+    Route::post('/login', [LoginUserController::class, 'login']);
+});
+
+// Logout
+Route::prefix('v1')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/logout', [LoginUserController::class, 'logout']);
+        });
 });
