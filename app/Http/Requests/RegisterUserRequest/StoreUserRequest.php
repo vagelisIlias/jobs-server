@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\UserRequest;
+namespace App\Http\Requests\RegisterUserRequest;
 
 use App\Models\User;
 use Illuminate\Support\Str;
