@@ -38,7 +38,11 @@ class RegisterUserController extends Controller
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
-            return $this->sendError(self::FAILED, 500, Response::HTTP_INTERNAL_SERVER_ERROR . $e->getMessage());
+            return $this->sendError(
+                self::FAILED . ': ' . $e->getMessage(),
+                [],
+                Response::HTTP_CONFLICT
+            );
         }
 
         Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
