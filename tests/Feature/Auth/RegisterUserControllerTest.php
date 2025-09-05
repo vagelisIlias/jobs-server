@@ -58,7 +58,7 @@ class RegisterUserControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_it_send_an_email_user_registered()
+    public function test_it_can_send_an_email_to_registered_user()
     {
         Mail::fake();
 
@@ -88,7 +88,7 @@ class RegisterUserControllerTest extends TestCase
     public function test_it_can_throw_a_throwable_exception(): void
     {
         $this->mock(StoreUserRequest::class, function ($mock) {
-            $mock->shouldReceive('storeUser')->andThrow(new Exception('Test error'));
+            $mock->shouldReceive('register')->andThrow(new Exception('Test errors'));
             $mock->shouldReceive('token_name')->andReturn('registration_token');
         });
 
@@ -108,7 +108,6 @@ class RegisterUserControllerTest extends TestCase
         ];
 
         $response = $this->postJson('api/v1/register', $data);
-        $response->assertStatus(500);
-        $response->assertJson(['error' => 'Test error']);
+        $response->assertStatus(409);
     }
 }

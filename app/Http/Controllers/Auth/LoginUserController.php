@@ -30,11 +30,10 @@ class LoginUserController extends Controller
      */
     public function login(LoginUserRequest $loginUserRequest): JsonResponse
     {
-        $credentials = $loginUserRequest->only(self::EMAIL, self::PASSWORD);
-        $user = User::where(self::EMAIL, $credentials[self::EMAIL])->first();
+        $user = User::where(self::EMAIL, $loginUserRequest->input(self::EMAIL))->first();
 
         if (!$user || !Hash::check($loginUserRequest->input(self::PASSWORD), $user->password)) {
-            return $this->sendError(self::ERROR, 401);
+            return $this->sendError(self::ERROR, [],Response::HTTP_UNAUTHORIZED);
         }
 
         try {
@@ -42,7 +41,11 @@ class LoginUserController extends Controller
             $token->accessToken->last_used_at = now();
             $token->accessToken->save();
         } catch (Throwable $e) {
-             return $this->sendError(self::FAILED_TOKEN, 409, Response::HTTP_CONFLICT . $e->getMessage());
+             return $this->sendError(
+                self::FAILED_TOKEN . ': ' .$e->getMessage(),
+                [],
+                Response::HTTP_CONFLICT
+            );
         }
 
         return $this->sendResponse([
@@ -50,7 +53,7 @@ class LoginUserController extends Controller
             'login_token' => $token->plainTextToken,
             'token_type' => 'Bearer',
             'expires_at' => $token->accessToken->expires_at->toISOString(),
-        ], self::SUCCESS);
+        ], self::SUCCESS, Response::HTTP_OK);
     }
 }
 
