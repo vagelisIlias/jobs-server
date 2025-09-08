@@ -35,11 +35,8 @@ class StoreJobPostRequest extends FormRequest
 
     public function storeJobPost(): JobPost
     {
-        /** @var \App\Models\User $user */
-        $userId = Auth::user()->id;
-
         return JobPost::create([
-            'user_id' => $userId,
+            'user_id' => Auth::user()->id,
             'title' => $this->title,
             'description' => $this->description,
             'requirements' => $this->requirements,

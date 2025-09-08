@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
 Route::prefix('v1')->group(function () {
     Route::post('/register', [RegisterUserController::class, 'register']);
     Route::post('/login', [LoginUserController::class, 'login']);
+    Route::get('/jobs', [JobPostController::class, 'index']);
 });
 
 // All Auth routes
