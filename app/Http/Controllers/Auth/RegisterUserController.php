@@ -47,11 +47,10 @@ class RegisterUserController extends Controller
 
         Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
 
-        return $this->sendResponse([
-            ...new UserResource($user)->toArray($storeUserRequest),
-            'registration_token' => $token->plainTextToken,
-            'token_type' => 'Bearer',
-            'expires_at' => $token->accessToken->expires_at->toISOString(),
-        ],self::SUCCESS, Response::HTTP_CREATED);
+        return $this->sendResponse(
+            new UserResource($user),
+            self::SUCCESS,
+            Response::HTTP_CREATED
+        );
     }
 }

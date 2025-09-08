@@ -53,7 +53,7 @@ return new class extends Migration
             $table->dropColumn('last_name');
             $table->dropColumn('user_name');
             $table->dropColumn('slug');
-            $table->dropColumn( 'email');
+            $table->dropColumn('email');
             $table->dropColumn('email_verified_at');
             $table->dropColumn('password');
             $table->dropColumn('role');
