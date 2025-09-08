@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Requests\JobPostsRequest\StoreJobPostRequest;
 use App\Http\Requests\JobPostsRequest\UpdateJobPostRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobPostController extends Controller
 {
@@ -27,9 +28,9 @@ class JobPostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResource
     {
-        //
+        return JobPostResource::collection(JobPost::paginate(10));
     }
 
     /**
@@ -39,9 +40,8 @@ class JobPostController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = Auth::user();
 
-            if (!$user) {
+            if (!Auth::user()) {
                 return $this->sendError(self::UNAUTHORIZED, [], Response::HTTP_UNAUTHORIZED);
             }
 
