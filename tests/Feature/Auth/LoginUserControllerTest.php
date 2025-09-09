@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class LoginUserControllerTest extends TestCase
+final class LoginUserControllerTest extends TestCase
 {
     use RefreshDatabase;
     public function test_it_can_successfully_login_user()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\JobPosts;
 
 use Throwable;
@@ -13,7 +15,6 @@ use App\Services\JobPostsSimilarityChecker;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Requests\JobPostsRequest\StoreJobPostRequest;
-use App\Http\Requests\JobPostsRequest\UpdateJobPostRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobPostController extends Controller
@@ -64,27 +65,27 @@ class JobPostController extends Controller
             new JobPostResource($jobPost)->toArray($storeJobPostRequest),self::SUCCESS, Response::HTTP_CREATED);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(JobPost $jobPost)
-    {
-        //
-    }
+    // /**
+    //  * Display the specified resource.
+    //  */
+    // public function show(JobPost $jobPost)
+    // {
+    //     //
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateJobPostRequest $request, JobPost $jobPost)
-    {
-        //
-    }
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
+    // public function update(UpdateJobPostRequest $request, JobPost $jobPost)
+    // {
+    //     //
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(JobPost $jobPost)
-    {
-        //
-    }
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
+    // public function destroy(JobPost $jobPost)
+    // {
+    //     //
+    // }
 }

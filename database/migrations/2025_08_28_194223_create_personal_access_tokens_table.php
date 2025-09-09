@@ -28,6 +28,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Disable foreign constraints if need it
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('tokenable');
+        Schema::enableForeignKeyConstraints();
+
         Schema::dropIfExists('personal_access_tokens');
     }
 };

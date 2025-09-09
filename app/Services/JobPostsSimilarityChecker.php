@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\JobPostsRequest\StoreJobPostRequest;
 
-final class JobPostsSimilarityChecker
+class JobPostsSimilarityChecker
 {
     public function __construct(private StoreJobPostRequest $storeJobPostRequest)
     {
