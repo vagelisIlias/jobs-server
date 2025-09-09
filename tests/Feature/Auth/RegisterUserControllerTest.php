@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Http\Requests\RegisterUserRequest\StoreUserRequest;
 
-
-class RegisterUserControllerTest extends TestCase
+final class RegisterUserControllerTest extends TestCase
 {
     use RefreshDatabase;
 

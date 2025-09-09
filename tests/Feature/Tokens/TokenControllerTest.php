@@ -6,19 +6,20 @@ namespace Tests\Feature\Tokens;
 
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use App\Exceptions\Tokens\UserNotFoundException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TokenControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    public function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('migrate');
+    }
 
     public function test_it_can_generate_new_token()
     {
-        DB::shouldReceive('beginTransaction')->never();
-        DB::shouldReceive('commit')->never();
-
         $email = 'test@example.com';
         $password = '123';
         $token = 'Test Token';
@@ -40,8 +41,6 @@ class TokenControllerTest extends TestCase
 
     public function test_it_can_not_find_the_user()
     {
-        DB::shouldReceive('beginTransaction')->never();
-        DB::shouldReceive('commit')->never();
         $this->withoutExceptionHandling();
 
         $data = [

@@ -47,7 +47,11 @@ return new class extends Migration
             $table->dropColumn('status');
         });
 
+        // Disable foreign constraints if need it
         Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('user_id');
+        Schema::dropIfExists('job_posts');
+        Schema::enableForeignKeyConstraints();
 
         Schema::dropIfExists('job_posts');
     }
