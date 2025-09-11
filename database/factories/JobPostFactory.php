@@ -20,7 +20,7 @@ class JobPostFactory extends Factory
     {
         $title = $this->faker->sentence(3);
         return [
-            'user_id' => User::inRandomOrder()->first()?->id,
+            'user_id' => User::factory(),
             'title' => $title,
             'slug' => Str::slug($title),
             'description' => $this->faker->paragraph(3),

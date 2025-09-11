@@ -24,8 +24,7 @@ return new class extends Migration
             $table->enum('status', ['open', 'closed', 'draft'])->default('open');
             $table->timestamps();
 
-            $table->unique(['user_id', 'title', 'location', 'department']);
-
+            $table->unique(['user_id', 'title']);
         });
     }
 
