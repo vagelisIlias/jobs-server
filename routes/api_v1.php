@@ -13,7 +13,7 @@ Route::prefix('v1')->group(function () {
     Route::resources(['/token/generate' => TokenController::class]);
 });
 
-// Register Login users
+// Register Login users and not Auth routes
 Route::prefix('v1')->group(function () {
     Route::post('/register', [RegisterUserController::class, 'register']);
     Route::post('/login', [LoginUserController::class, 'login']);
@@ -24,6 +24,7 @@ Route::prefix('v1')->group(function () {
 Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
             Route::post('/job/create', [JobPostController::class, 'store']);
+            Route::patch('/job/update/{jobPost}', [JobPostController::class, 'update']);
             Route::post('/logout', [LoginUserController::class, 'logout']);
         });
 });
