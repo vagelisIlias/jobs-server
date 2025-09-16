@@ -7,7 +7,7 @@ namespace Tests\Feature\Auth;
 use Exception;
 use Tests\TestCase;
 use App\Models\User;
-use App\Mail\UserRegisteredEmail;
+use App\Mail\Api\V1\UserRegisterEmail\UserRegisteredEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Http\Requests\RegisterUserRequest\StoreUserRequest;

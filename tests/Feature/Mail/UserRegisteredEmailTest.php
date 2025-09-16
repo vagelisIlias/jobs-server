@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Mail;
 
 use Tests\TestCase;
-use App\Mail\UserRegisteredEmail;
+use App\Mail\Api\V1\UserRegisterEmail\UserRegisteredEmail;
 use Illuminate\Support\Facades\Mail;
 
 class UserRegisteredEmailTest extends TestCase

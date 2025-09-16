@@ -3,28 +3,26 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Tokens\TokenController;
-use App\Http\Controllers\Auth\LoginUserController;
-use App\Http\Controllers\Auth\RegisterUserController;
-use App\Http\Controllers\JobPosts\JobPostController;
 
-// Generate Token
-Route::prefix('v1')->group(function () {
-    Route::resources(['/token/generate' => TokenController::class]);
-});
+use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Tokens\TokenController;
+use App\Http\Controllers\Api\V1\JobPosts\JobPostController;
 
-// Register Login users and not Auth routes
-Route::prefix('v1')->group(function () {
-    Route::post('/register', [RegisterUserController::class, 'register']);
-    Route::post('/login', [LoginUserController::class, 'login']);
-    Route::get('/jobs', [JobPostController::class, 'index']);
-});
 
-// All Auth routes
 Route::prefix('v1')->group(function () {
+
+    // Public routes (no auth)
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::apiResource('jobs', JobPostController::class)->only(['index', 'show']);
+
+    // Token endpoints (for testing or initial authentication)
+    Route::post('/token/generate', [TokenController::class, 'generate']);
+    Route::post('/token/create', [TokenController::class, 'create']);
+
+    // Auth-protected routes
     Route::middleware('auth:sanctum')->group(function () {
-            Route::post('/job/create', [JobPostController::class, 'store']);
-            Route::patch('/job/update/{jobPost}', [JobPostController::class, 'update']);
-            Route::post('/logout', [LoginUserController::class, 'logout']);
-        });
+        Route::apiResource('jobs', JobPostController::class)->only(['store', 'destroy', 'update']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
 });
