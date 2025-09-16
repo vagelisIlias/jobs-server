@@ -8,7 +8,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\JobPost;
 use App\Http\Requests\JobPostsRequest\StoreJobPostRequest;
-use App\Services\JobPostsSimilarityChecker;
+use App\Services\JobPosts\JobPostsSimilarityChecker;
 use Illuminate\Support\Facades\Artisan;
 
 class JobPostsSimilarityCheckerTest extends TestCase

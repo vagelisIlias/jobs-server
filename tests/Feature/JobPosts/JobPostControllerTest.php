@@ -9,7 +9,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\JobPost;
 use Illuminate\Support\Facades\Artisan;
-use App\Services\JobPostsSimilarityChecker;
+use App\Services\JobPosts\JobPostsSimilarityChecker;
 use App\Http\Requests\JobPostsRequest\StoreJobPostRequest;
 
 final class JobPostControllerTest extends TestCase

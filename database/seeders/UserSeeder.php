@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
 {
@@ -21,7 +20,7 @@ class UserSeeder extends Seeder
             'user_name' => 'adminUser',
             'slug' => Str::slug('adminUser'),
             'email' => 'admin@gmail.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('123456'),
             'role' => 'admin',
             'status' => 'active',
         ]);
