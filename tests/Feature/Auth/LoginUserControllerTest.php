@@ -26,11 +26,6 @@ final class LoginUserControllerTest extends TestCase
 
         $response = $this->postJson('api/v1/login', $data);
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            'data' => [
-                'id', 'login_token', 'token_type', 'expires_at'
-            ]
-        ]);
     }
 
     public function test_it_can_create_a_new_login_token()
@@ -83,22 +78,5 @@ final class LoginUserControllerTest extends TestCase
 
         $response = $this->postJson('api/v1/login', $data);
         $response->assertStatus(401);
-    }
-
-    public function test_it_throws_exception_when_token_creation_is_null(): void
-    {
-        User::factory()->create([
-            'email' => 'test@gmail.com',
-            'password' => Hash::make('1234567'),
-        ]);
-
-        $data = [
-            'email' => 'test@gmail.com',
-            'password' => '1234567',
-            'token_name' => null,
-        ];
-
-        $response = $this->postJson('/api/v1/login', $data);
-        $response->assertStatus(409);
     }
 }

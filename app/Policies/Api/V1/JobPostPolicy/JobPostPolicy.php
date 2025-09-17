@@ -1,27 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies\Api\V1\JobPostPolicy;
 
 use App\Models\JobPost;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class JobPostPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(?User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, JobPost $jobPost): bool
+    public function view(?User $user, JobPost $jobPost): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +38,7 @@ class JobPostPolicy
      */
     public function update(User $user, JobPost $jobPost): bool
     {
-        return $user->id !== $jobPost->user_id;
+        return $user->id === $jobPost->user_id;
     }
 
     /**
@@ -45,7 +46,7 @@ class JobPostPolicy
      */
     public function delete(User $user, JobPost $jobPost): bool
     {
-        return false;
+        return $user->id === $jobPost->user_id;
     }
 
     /**

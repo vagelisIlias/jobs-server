@@ -6,6 +6,7 @@ namespace App\Http\Resources\Api\V1\UserResource;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -19,19 +20,21 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'users',
+            'type' => 'user',
             'id' => $this->id,
             'attributes' => [
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'user_name' => $this->user_name,
-                'slug' => Str::slug($this->user_name),
-                'email' => $this->email,
-                'email_verified_at' => $this->email_verified_at,
-                'role' => $this->role,
-                'status' => $this->status,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
+                'slug' => $this->when(Auth::check() && Auth::id() === $this->id, Str::slug($this->slug)),
+                'email' => $this->when(Auth::check() && Auth::id() === $this->id, $this->email),
+                $this->mergeWhen($request->routeIs('users.*'), [
+                    'email_verified_at' => $this->when($request->user()?->id === $this->id, $this->email_verified_at),
+                    'created_at' => $this->when(Auth::check() && Auth::id() === $this->id, $this->created_at),
+                    'updated_at' => $this->when(Auth::check() && Auth::id() === $this->id, $this->updated_at),
+                ]),
+                'role' => $this->when(Auth::check() && Auth::id() === $this->id, $this->role),
+                'status' => $this->when(Auth::check() && Auth::id() === $this->id, $this->status),
             ],
         ];
     }
