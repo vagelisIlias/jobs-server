@@ -42,13 +42,13 @@ class StoreUserRequest extends FormRequest
     public function storeUser(): User
     {
         return User::create([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'user_name' => $this->user_name,
-            'slug' => Str::slug($this->user_name),
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-            'remember_token' => Str::random(20),
-        ]);
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'user_name' => $this->user_name,
+                'slug' => Str::slug($this->user_name),
+                'email' => $this->email,
+                'password' => Hash::make($this->password),
+                'remember_token' => Str::random(20),
+           ]);
     }
 }

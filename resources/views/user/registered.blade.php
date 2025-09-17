@@ -13,4 +13,3 @@ If you did not create an account, no action is required.
 Thanks,<br>
 {{ config('app.name') }}
 </x-mail::message>
-

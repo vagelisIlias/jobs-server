@@ -54,7 +54,6 @@ class StoreJobPostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.unique' => 'The title has already been taken.',
             'title.max' => 'The title may not be greater than 50 characters.',
             'department.max' => 'The department may not be greater than 50 characters.',
         ];

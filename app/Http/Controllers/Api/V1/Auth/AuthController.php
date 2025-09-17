@@ -49,22 +49,25 @@ class AuthController extends Controller
     public function register(StoreUserRequest $request, TokenController $token): JsonResponse
     {
         try {
-            DB::beginTransaction();
             $user = $request->storeUser();
             $tokenData = $token->create($user, 'register_token');
-            DB::commit();
             Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
-
             return $this->success([
                 'user' => new UserResource($user),
                 'register_token' => $tokenData,
-            ],   'Registration was successful', Response::HTTP_CREATED);
+            ], 'Registration was successful', Response::HTTP_CREATED);
+
         } catch (Throwable $e) {
-            DB::rollBack();
-            return $this->error(
-                $e->getMessage(),
-             Response::HTTP_CONFLICT
-            );
+            // In case error thrown delete register user and token
+            if ($user->id) {
+                User::where('id', $user->id)->delete();
+                    DB::table('personal_access_tokens')
+                    ->where('tokenable_id', $user->id)
+                    ->where('tokenable_type', User::class)
+                    ->delete();
+            }
+
+            return $this->error($e->getMessage(), Response::HTTP_CONFLICT);
         }
     }
 
@@ -79,7 +82,7 @@ class AuthController extends Controller
 
     public function forgotPassword()
     {
-        
+
     }
 
     public function resetPassword()
