@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\V1\JobResource;
 
+use App\Http\Resources\Api\V1\UserResource\UserResource;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,13 +33,12 @@ class JobPostResource extends JsonResource
                 'updated_at' => $this->updated_at,
             ],
             'relationships' => [
-                'data' => [
-                    'type' => 'user',
-                     'user_id' => $this->user_id,
-                ]
-            ],
-            "links" => [
-                ['self' => route('jobs.show', ['job' => $this->slug])]
+                'user' => $this->whenLoaded('user', function () use ($request) {
+                    return (new UserResource($this->user))->toArray($request);
+                }),
+                'links' => [
+                    'self' => route('jobs.show', ['job' => $this->slug])
+                ],
             ],
         ];
     }

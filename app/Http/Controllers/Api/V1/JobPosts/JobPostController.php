@@ -9,10 +9,11 @@ use App\Models\JobPost;
 use App\Http\Controllers\Controller;
 use App\Trait\Api\V1\ApiResponseTrait\ApiResponseTrait;
 use App\Http\Resources\Api\V1\JobResource\JobPostResource;
-
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class JobPostController extends Controller
 {
+    use AuthorizesRequests;
     use ApiResponseTrait;
 
     private const CREATE = 'Job post created successfully';
@@ -23,7 +24,12 @@ class JobPostController extends Controller
      */
     public function index()
     {
-        return JobPostResource::collection(JobPost::paginate());
+        return JobPostResource::collection(JobPost::with('user')->paginate());
+    }
+
+    public function show(JobPost $job): JobPostResource
+    {
+        return new JobPostResource($job->load('user'));
     }
 
     /**
@@ -59,10 +65,7 @@ class JobPostController extends Controller
     // /**
     //  * Display the specified resource.
     //  */
-    public function show(JobPost $job): JobPostResource
-    {
-        return new JobPostResource($job);
-    }
+
 
     /**
      * Update the specified resource in storage.

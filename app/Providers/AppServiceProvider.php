@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Providers\Api\V1\AppServiceProvider;
+declare(strict_types=1);
+
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

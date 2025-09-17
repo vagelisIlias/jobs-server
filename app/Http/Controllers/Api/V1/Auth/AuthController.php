@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Http\Controllers\Api\V1\Tokens\TokenController;
 use App\Trait\Api\V1\ApiResponseTrait\ApiResponseTrait;
 use App\Http\Resources\Api\V1\UserResource\UserResource;
+use App\Http\Requests\Api\V1\AuthRequest\LoginUserRequest;
+use App\Http\Requests\Api\V1\AuthRequest\StoreUserRequest;
 use App\Mail\Api\V1\UserRegisteredEmail\UserRegisteredEmail;
-use App\Http\Requests\Api\V1\Auth\LoginUserRequest\LoginUserRequest;
-use App\Http\Requests\Api\V1\Auth\RegisterUserRequest\StoreUserRequest;
 
 class AuthController extends Controller
 {
@@ -27,7 +27,7 @@ class AuthController extends Controller
     public function login(LoginUserRequest $request, TokenController $token): JsonResponse
     {
         try {
-             if (!Auth::attempt($request->only('email', 'password'))) {
+            if (!Auth::attempt($request->only('email', 'password'))) {
                 return $this->error('Invalid credentials', Response::HTTP_UNAUTHORIZED);
             }
 
@@ -48,11 +48,17 @@ class AuthController extends Controller
 
     public function register(StoreUserRequest $request, TokenController $token): JsonResponse
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             $user = $request->storeUser();
             $tokenData = $token->create($user, 'register_token');
             DB::commit();
+            Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
+
+            return $this->success([
+                'user' => new UserResource($user),
+                'register_token' => $tokenData,
+            ],   'Registration was successful', Response::HTTP_CREATED);
         } catch (Throwable $e) {
             DB::rollBack();
             return $this->error(
@@ -60,23 +66,24 @@ class AuthController extends Controller
              Response::HTTP_CONFLICT
             );
         }
-
-        Mail::to($user)->send(new UserRegisteredEmail($user->user_name));
-
-        return $this->success([
-            'user' => new UserResource($user),
-            'register_token' => $tokenData,
-        ],   'Registration was successful', Response::HTTP_CREATED);
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        if($request->user()->currentAccessToken()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
         return $this->success([], 'User logout successfully', Response::HTTP_OK);
     }
 
-    // public function resetPassword()
-    // {
+    public function forgotPassword()
+    {
+        
+    }
 
-    // }
+    public function resetPassword()
+    {
+
+    }
 }
