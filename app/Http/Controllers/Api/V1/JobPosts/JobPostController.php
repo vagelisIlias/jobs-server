@@ -6,10 +6,16 @@ namespace App\Http\Controllers\Api\V1\JobPosts;
 
 use Throwable;
 use App\Models\JobPost;
+
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Trait\Api\V1\ApiResponseTrait\ApiResponseTrait;
-use App\Http\Resources\Api\V1\JobResource\JobPostResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Resources\Api\V1\JobResource\JobPostResource;
+use App\Http\Requests\Api\V1\JobPostsRequest\StoreJobPostRequest;
+use App\Services\Api\V1\JobPostService\JobPostsSimilarityChecker;
 
 class JobPostController extends Controller
 {
@@ -35,32 +41,33 @@ class JobPostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(StoreJobPostRequest $storeJobPostRequest, JobPostsSimilarityChecker $jobPostsSimilarityChecker): JsonResponse
-    // {
-    //     if (!Auth::user()) {
-    //         return $this->error('Unauthorized user', 401);
-    //     }
+    public function store(StoreJobPostRequest $storeJobPostRequest, JobPostsSimilarityChecker $jobPostsSimilarityChecker): JsonResponse
+    {
+        $this->authorize('store', );
+        try {
+            DB::beginTransaction();
+            if ($jobPostsSimilarityChecker->isSimilar()) {
+                return $this->error(
+                    'Similar job has already been created, make sure all fields are different',
+                    Response::HTTP_CONFLICT);
+            }
 
-    //     DB::beginTransaction();
-    //     try {
+            $jobPost = $storeJobPostRequest->storeJobPost();
+            DB::commit();
+        } catch (Throwable $e) {
+             DB::rollBack();
+            return $this->error(
+                'Failed to create job post' . ': ' . $e->getMessage(),
+                Response::HTTP_CONFLICT
+            );
+        }
 
-    //         if ($jobPostsSimilarityChecker->isSimilar()) {
-    //             return $this->error('Similar job has already been created, make sure all fields are different', 409);
-    //         }
-
-    //         $jobPost = $storeJobPostRequest->storeJobPost();
-    //         DB::commit();
-    //     } catch (Throwable $e) {
-    //          DB::rollBack();
-    //         return $this->error(
-    //             'Failed to create job post' . ': ' . $e->getMessage(),
-    //             409
-    //         );
-    //     }
-
-    //     return $this->success('Job post update successfully', 200);
-
-    // }
+        return $this->success([
+            new JobPostResource($jobPost)
+            ],'Job post updated successfully',
+            Response::HTTP_OK
+        ); 
+    }
 
     // /**
     //  * Display the specified resource.

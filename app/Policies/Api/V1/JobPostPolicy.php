@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Policies\Api\V1\JobPostPolicy;
+namespace App\Policies\Api\V1;
 
 use App\Models\JobPost;
 use App\Models\User;

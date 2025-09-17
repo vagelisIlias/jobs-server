@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Policies\Api\V1\UserPolicy;
+namespace App\Policies\Api\V1;
 
 use App\Models\User;
 
