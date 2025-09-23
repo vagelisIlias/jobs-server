@@ -16,15 +16,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Resources\Api\V1\JobResource\JobPostResource;
 use App\Http\Requests\Api\V1\JobPostsRequest\StoreJobPostRequest;
 use App\Services\Api\V1\JobPostService\JobPostsSimilarityChecker;
+use App\Http\Requests\Api\V1\JobPostsRequest\UpdateJobPostRequest;
 
 class JobPostController extends Controller
 {
     use AuthorizesRequests;
     use ApiResponseTrait;
-
-    private const CREATE = 'Job post created successfully';
-    private const UPDATE = 'Job post updated successfully';
-
+    
     /**
      * Display a listing of the resource.
      */
@@ -33,6 +31,9 @@ class JobPostController extends Controller
         return JobPostResource::collection(JobPost::with('user')->paginate());
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(JobPost $job): JobPostResource
     {
         return new JobPostResource($job->load('user'));
@@ -41,6 +42,30 @@ class JobPostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function store(StoreJobPostRequest $request, JobPostsSimilarityChecker $jobPostsSimilarityChecker): JsonResponse
+    {
+        try {
+            if ($jobPostsSimilarityChecker->isSimilar()) {
+                return $this->error(
+                    'Similar job has already been created, make sure all fields are not the same',
+                    Response::HTTP_CONFLICT);
+            }
+            $jobPost = $request->storeJobPost()->load('user');
+        } catch (Throwable $e) {
+            if ($jobPost->id) {
+                JobPost::where('id', $jobPost->id)->delete();
+            }
+
+            return $this->error($e->getMessage(),Response::HTTP_CONFLICT);
+        }
+
+        return $this->success([
+            'data' => new JobPostResource($jobPost),
+            ],'Job post created successfully',
+            Response::HTTP_CREATED
+        );
+    }
+=======
     public function store(StoreJobPostRequest $storeJobPostRequest, JobPostsSimilarityChecker $jobPostsSimilarityChecker): JsonResponse
     {
         $this->authorize('store', );
@@ -69,48 +94,30 @@ class JobPostController extends Controller
         ); 
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  */
-
-
     /**
      * Update the specified resource in storage.
      */
-    // public function update(UpdateJobPostRequest $request, JobPost $jobPost): JsonResponse
-    // {
-    //     // if (Auth::id() !== $jobPost->user_id) {
-    //     //     return $this->sendError(self::UNAUTHORIZED, [], Response::HTTP_UNAUTHORIZED);
-    //     // }
+    public function update(UpdateJobPostRequest $request, JobPost $job): JsonResponse
+    {
+        try {
+            $jobPost = $request->updateJobPost($job)->load('user');
+        } catch (Throwable $e) {
+            return $this->error($e->getMessage(), Response::HTTP_CONFLICT);
+        }
 
-    //     $this->authorize('update', $jobPost);
+        return $this->success([
+            'jobPost' => new JobPostResource($jobPost)->toArray($request),
+        ],'Job post updated successfully',
+        Response::HTTP_OK,);
+    }
 
-    //     try {
-    //         JobPost::create([
-    //             'title' => $request->title,
-    //             'description' => $request->description,
-    //             'requirements' => $request->requirements,
-    //             'location' => $request->location,
-    //             'department' => $request->department,
-    //         ]);
-    //     } catch (Throwable $e) {
-
-    //         return $this->sendError(
-    //             self::FAILED . ': ' . $e->getMessage(),
-    //             [],
-    //             Response::HTTP_CONFLICT
-    //         );
-    //     }
-
-    //     return $this->sendResponse(
-    //         new JobPostResource($jobPost)->toArray($request),self::UPDATE, Response::HTTP_OK);
-    // }
-
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(JobPost $jobPost)
-    // {
-    //     //
-    // }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(JobPost $job): JsonResponse
+    {
+        $job->delete();
+        return $this->success([],'Job post deleted successfully',
+        Response::HTTP_OK,);
+    }
 }

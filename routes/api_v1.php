@@ -32,7 +32,7 @@ Route::prefix('v1')->group(function () {
 
     // Auth-protected routes
     Route::middleware('auth:sanctum')->group(function () {
-        Route::apiResource('jobs', JobPostController::class)->only(['store', 'destroy', 'update']);
+        Route::apiResource('jobs', JobPostController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('users', UserController::class);
         Route::post('/logout', [AuthController::class, 'logout']);
     });

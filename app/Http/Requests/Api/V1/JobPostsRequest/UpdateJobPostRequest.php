@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api\V1\JobPostsRequest;
 
+use App\Models\JobPost;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -33,13 +34,25 @@ class UpdateJobPostRequest extends FormRequest
         ];
     }
 
+    public function updateJobPost(JobPost $job): JobPost
+    {
+        $job->update($this->only([
+            'title',
+            'description',
+            'requirements',
+            'location',
+            'department',
+        ]));
+
+        return $job;
+    }
+
     /**
      * Customize the validation messages.
      */
     public function messages(): array
     {
         return [
-            'title.unique' => 'The title has already been taken.',
             'title.max' => 'The title may not be greater than 50 characters.',
             'department.max' => 'The department may not be greater than 50 characters.',
         ];
