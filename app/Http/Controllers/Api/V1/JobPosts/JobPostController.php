@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Api\V1\JobPosts;
 
 use Throwable;
 use App\Models\JobPost;
+
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -62,6 +64,34 @@ class JobPostController extends Controller
             ],'Job post created successfully',
             Response::HTTP_CREATED
         );
+    }
+=======
+    public function store(StoreJobPostRequest $storeJobPostRequest, JobPostsSimilarityChecker $jobPostsSimilarityChecker): JsonResponse
+    {
+        $this->authorize('store', );
+        try {
+            DB::beginTransaction();
+            if ($jobPostsSimilarityChecker->isSimilar()) {
+                return $this->error(
+                    'Similar job has already been created, make sure all fields are different',
+                    Response::HTTP_CONFLICT);
+            }
+
+            $jobPost = $storeJobPostRequest->storeJobPost();
+            DB::commit();
+        } catch (Throwable $e) {
+             DB::rollBack();
+            return $this->error(
+                'Failed to create job post' . ': ' . $e->getMessage(),
+                Response::HTTP_CONFLICT
+            );
+        }
+
+        return $this->success([
+            new JobPostResource($jobPost)
+            ],'Job post updated successfully',
+            Response::HTTP_OK
+        ); 
     }
 
     /**
