@@ -82,11 +82,16 @@ class AuthController extends Controller
 
     public function forgotPassword()
     {
-
+        // TODO send an email with forgotPassword
     }
 
     public function resetPassword()
     {
+        // TODO new reset password 
+    }
 
+    public function deleteUser()
+    {
+        // TODO send email to user once the account is deleted
     }
 }

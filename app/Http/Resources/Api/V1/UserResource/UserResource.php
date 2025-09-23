@@ -23,19 +23,22 @@ class UserResource extends JsonResource
             'type' => 'user',
             'id' => $this->id,
             'attributes' => [
-                'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
+                'first_name' => $this->when($this->isOwner(), $this->first_name),
+                'last_name' => $this->when($this->isOwner(), $this->last_name),
                 'user_name' => $this->user_name,
-                'slug' => $this->when(Auth::check() && Auth::id() === $this->id, Str::slug($this->slug)),
-                'email' => $this->when(Auth::check() && Auth::id() === $this->id, $this->email),
-                $this->mergeWhen($request->routeIs('users.*'), [
-                    'email_verified_at' => $this->when($request->user()?->id === $this->id, $this->email_verified_at),
-                    'created_at' => $this->when(Auth::check() && Auth::id() === $this->id, $this->created_at),
-                    'updated_at' => $this->when(Auth::check() && Auth::id() === $this->id, $this->updated_at),
-                ]),
-                'role' => $this->when(Auth::check() && Auth::id() === $this->id, $this->role),
-                'status' => $this->when(Auth::check() && Auth::id() === $this->id, $this->status),
+                'slug' => $this->when($this->isOwner(), Str::slug($this->slug)),
+                'email' => $this->when($this->isOwner(), $this->email),
+                'email_verified_at' => $this->when($this->isOwner(), $this->email_verified_at),
+                'created_at' => $this->when($this->isOwner(), $this->created_at),
+                'updated_at' => $this->when($this->isOwner(), $this->updated_at),
+                'role' => $this->when($this->isOwner(), $this->role),
+                'status' => $this->when($this->isOwner(), $this->status),
             ],
         ];
+    }
+
+    private function isOwner(): bool
+    {
+        return Auth::check() && Auth::id() === $this->id;
     }
 }
