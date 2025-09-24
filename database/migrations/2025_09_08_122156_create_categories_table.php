@@ -25,19 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-
-        // Drop individual columns if needed
-        Schema::table('categories', function (Blueprint $table){
-            $table->dropColumn('job_post_id');
-            $table->dropColumn('name');
-            $table->dropColumn('slug');
-            $table->dropColumn('description');
-        });
-
         // Disable foreign constraints if need it
         // Schema::disableForeignKeyConstraints();
-        // Schema::dropIfExists('user_id');
-        // Schema::dropIfExists('job_posts');
+        // Schema::dropIfExists('categories');
         // Schema::enableForeignKeyConstraints();
 
         Schema::dropIfExists('categories');

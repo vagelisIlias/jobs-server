@@ -20,11 +20,7 @@ class JobPost extends Model
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'user_id', 'category_id', 'title', 'slug', 'description',
-        'requirements', 'wage', 'location', 'department',
-        'employment_type', 'experience_level', 'position', 'status'
-    ];
+    protected $guarded = [];
 
     protected $attributes = [
         'employment_type' => JobPostEmploymentType::FullTime->value,
@@ -37,6 +33,16 @@ class JobPost extends Model
             'employment_type' => JobPostEmploymentType::class,
             'status' => JobPostStatus::class,
         ];
+    }
+
+    public function getEmploymentTypeAttribute($value): string
+    {
+        return JobPostEmploymentType::from($value)->value;
+    }
+
+    public function getStatusAttribute($value): string
+    {
+        return JobPostStatus::from($value)->value;
     }
 
     public function user(): BelongsTo
