@@ -22,18 +22,16 @@ class UserResource extends JsonResource
         return [
             'type' => 'user',
             'id' => $this->id,
-            'attributes' => [
-                'first_name' => $this->when($this->isOwner(), $this->first_name),
-                'last_name' => $this->when($this->isOwner(), $this->last_name),
-                'user_name' => $this->user_name,
-                'slug' => $this->when($this->isOwner(), Str::slug($this->slug)),
-                'email' => $this->when($this->isOwner(), $this->email),
-                'email_verified_at' => $this->when($this->isOwner(), $this->email_verified_at),
-                'created_at' => $this->when($this->isOwner(), $this->created_at),
-                'updated_at' => $this->when($this->isOwner(), $this->updated_at),
-                'role' => $this->when($this->isOwner(), $this->role),
-                'status' => $this->when($this->isOwner(), $this->status),
-            ],
+            'first_name' => $this->when($this->isOwner(), $this->first_name),
+            'last_name' => $this->when($this->isOwner(), $this->last_name),
+            'user_name' => $this->user_name,
+            'slug' => $this->when($this->isOwner(), Str::slug($this->slug)),
+            'email' => $this->when($this->isOwner(), $this->email),
+            'email_verified_at' => $this->when($this->isOwner(), $this->email_verified_at),
+            'created_at' => $this->when($this->isOwner(), $this->created_at),
+            'updated_at' => $this->when($this->isOwner(), $this->updated_at),
+            'role' => $this->when($this->isOwner(), $this->role),
+            'status' => $this->when($this->isOwner(), $this->status),
         ];
     }
 

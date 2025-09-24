@@ -14,13 +14,17 @@ return new class extends Migration
         Schema::create('job_posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');
             $table->text('requirements');
+            $table->string('wage')->nullable();
             $table->string('location');
             $table->string('department');
             $table->enum('employment_type', ['full-time', 'part-time', 'contract'])->default('full-time');
+            $table->enum('experience_level', ['entry', 'junior', 'junior/mid', 'mid', 'mid/senior', 'senior', 'lead', 'mentor'])->nullable();
+            $table->enum('position', ['office', 'work-from-home', 'hybrid', 'remote', 'worldwide'])->default('office');
             $table->enum('status', ['open', 'closed', 'draft'])->default('open');
             $table->timestamps();
 
@@ -40,6 +44,7 @@ return new class extends Migration
             $table->dropColumn('slug');
             $table->dropColumn('description');
             $table->dropColumn('requirements');
+            $table->dropColumn('wage');
             $table->dropColumn('location');
             $table->dropColumn('department');
             $table->dropColumn('employment_type');

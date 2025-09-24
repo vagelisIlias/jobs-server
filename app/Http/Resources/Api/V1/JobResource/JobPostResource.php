@@ -22,18 +22,16 @@ class JobPostResource extends JsonResource
         return [
             'type' => 'jobposts',
             'id' => $this->id,
-            'attributes' => [
-                'title' => $this->title,
-                'slug' => Str::slug($this->title),
-                'description' => $this->description,
-                'requirements' => $this->requirements,
-                'location' => $this->location,
-                'department' => $this->department,
-                'employment_type' => $this->employment_type,
-                'status' => $this->status,
-                'created_at' => $this->created_at,
-                'updated_at' => $this->updated_at,
-            ],
+            'title' => $this->title,
+            'slug' => Str::slug($this->title),
+            'description' => $this->description,
+            'requirements' => $this->requirements,
+            'location' => $this->location,
+            'department' => $this->department,
+            'employment_type' => $this->employment_type,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'relationships' => [
                 'user' => $this->whenLoaded('user', function () use ($request) {
                     return (new UserResource($this->user))->toArray($request);
