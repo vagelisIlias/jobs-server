@@ -3,15 +3,16 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 type JobPost {
   id: ID!
   user_id: ID!
+  category_id: ID!
   title: String!
   slug: String!
   description: String!
   requirements: String!
-  wage: String
+  salary: String!
   location: String!
   department: String!
   employment_type: String!
-  experience_level: String
+  experience_level: String!
   position: String!
   status: String!
   created_at: DateTime!
@@ -31,15 +32,16 @@ extend type Query {
 extend type Mutation {
   createJobPost(
     user_id: ID!
+    category_id: ID!
     title: String!
     slug: String!
     description: String!
     requirements: String!
-    wage: String
+    salary: String
     location: String!
     department: String!
     employment_type: String!
-    experience_level: String
+    experience_level: String!
     position: String!
     status: String
   ): JobPost @create @can(ability: "create", model: "App\\Models\\JobPost")
@@ -50,7 +52,7 @@ extend type Mutation {
     slug: String
     description: String
     requirements: String
-    wage: String
+    salary: String
     location: String
     department: String
     employment_type: String
