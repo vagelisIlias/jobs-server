@@ -10,19 +10,11 @@ use App\Models\User;
 class JobPostPolicy
 {
     /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(?User $user): bool
-    {
-        return true;
-    }
-
-    /**
      * Determine whether the user can view the model.
      */
-    public function view(?User $user, JobPost $jobPost): bool
+    public function view(?User $user, JobPost $job): bool
     {
-        return true;
+        return $user->id === $job->user_id;
     }
 
     /**
@@ -32,7 +24,7 @@ class JobPostPolicy
     {
         return true;
     }
-
+    
     /**
      * Determine whether the user can update the model.
      */

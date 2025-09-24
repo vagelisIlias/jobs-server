@@ -6,8 +6,10 @@ namespace App\Http\Controllers\Api\V1\JobPosts;
 
 use Throwable;
 use App\Models\JobPost;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Trait\Api\V1\ApiResponseTrait\ApiResponseTrait;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -29,12 +31,33 @@ class JobPostController extends Controller
         return JobPostResource::collection(JobPost::with('user')->paginate());
     }
 
+    public function jobDescription(int $id): JobPostResource|JsonResponse
+    {
+        try {
+            $job = JobPost::with('user')->findOrFail($id);
+            return new JobPostResource($job);
+        } catch (Throwable $e) {
+            return $this->error(
+                'Job post cannot be found',
+                Response::HTTP_NOT_FOUND);
+        }
+    }
+
     /**
      * Display the specified resource.
      */
-    public function show(JobPost $job): JobPostResource
+    public function show(int $id): JobPostResource|JsonResponse
     {
-        return new JobPostResource($job->load('user'));
+        try {
+            $job = JobPost::with('user')->findOrFail($id);
+            $this->authorize('view', $job);
+            return new JobPostResource($job);
+        } catch (Throwable $e) {
+            return $this->error(
+                'Job post cannot be found',
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 
     /**
@@ -45,49 +68,73 @@ class JobPostController extends Controller
         try {
             if ($jobPostsSimilarityChecker->isSimilar()) {
                 return $this->error(
-                    'Similar job has already been created, make sure all fields are not the same',
-                    Response::HTTP_CONFLICT);
+                    'Similar job has already been created',
+                    Response::HTTP_CONFLICT
+                );
             }
-            $jobPost = $request->storeJobPost()->load('user');
+
+            $jobPost = DB::transaction(function () use ($request) {
+                return $request->storeJobPost()->load('user');
+            });
+
+            return $this->success(
+                ['data' => new JobPostResource($jobPost)],
+                'Job post created successfully',
+                Response::HTTP_CREATED
+            );
         } catch (Throwable $e) {
-            if ($jobPost->id) {
-                JobPost::where('id', $jobPost->id)->delete();
-            }
-
-            return $this->error($e->getMessage(),Response::HTTP_CONFLICT);
+            return $this->error(
+                $e->getMessage(),
+                Response::HTTP_CONFLICT
+            );
         }
-
-        return $this->success([
-            'data' => new JobPostResource($jobPost),
-            ],'Job post created successfully',
-            Response::HTTP_CREATED
-        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJobPostRequest $request, JobPost $job): JsonResponse
+    public function update(UpdateJobPostRequest $request, JobPost $jobPost): JsonResponse
     {
         try {
-            $jobPost = $request->updateJobPost($job)->load('user');
-        } catch (Throwable $e) {
-            return $this->error($e->getMessage(), Response::HTTP_CONFLICT);
-        }
+            $this->authorize('update', $jobPost);
+            $jobPost = $request->updateJobPost($jobPost)->load('user');
 
-        return $this->success([
-            'jobPost' => new JobPostResource($jobPost)->toArray($request),
-        ],'Job post updated successfully',
-        Response::HTTP_OK,);
+            return $this->success([
+                'jobPost' => new JobPostResource($jobPost),
+            ], 'Job post updated successfully', Response::HTTP_OK);
+        } catch (AuthorizationException $e) {
+            return $this->error(
+                'You are unauthorized for this action',
+                Response::HTTP_UNAUTHORIZED);
+        } catch (Throwable $e) {
+            return $this->error(
+                'Something went wrong',
+                Response::HTTP_CONFLICT);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JobPost $job): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $job->delete();
-        return $this->success([],'Job post deleted successfully',
-        Response::HTTP_OK,);
+        try {
+            $job = JobPost::findOrFail($id);
+            $this->authorize('delete', $job);
+            $job->delete();
+
+            return $this->success([],
+                'Job post deleted successfully',
+                Response::HTTP_OK
+            );
+        } catch (AuthorizationException $e) {
+            return $this->error(
+                'You are unauthorized for this action',
+                Response::HTTP_UNAUTHORIZED);
+        } catch (Throwable $e) {
+            return $this->error(
+                'Job post cannot be found',
+                Response::HTTP_NOT_FOUND);
+        }
     }
 }

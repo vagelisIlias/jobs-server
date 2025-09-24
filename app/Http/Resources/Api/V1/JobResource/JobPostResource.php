@@ -39,7 +39,7 @@ class JobPostResource extends JsonResource
                     return (new UserResource($this->user))->toArray($request);
                 }),
                 'links' => [
-                    'self' => route('jobs.show', ['job' => $this->slug])
+                    'self' => route('job.description', ['id' => $this->id])
                 ],
             ],
         ];
