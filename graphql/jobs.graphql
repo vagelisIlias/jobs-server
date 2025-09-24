@@ -1,0 +1,65 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type JobPost {
+  id: ID!
+  user_id: ID!
+  title: String!
+  slug: String!
+  description: String!
+  requirements: String!
+  wage: String
+  location: String!
+  department: String!
+  employment_type: String!
+  experience_level: String
+  position: String!
+  status: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+extend type Query {
+  jobPosts(
+    title: String @where(operator: "like")
+    location: String @where(operator: "like")
+    department: String @where(operator: "like")
+  ): [JobPost!]! @all
+
+  jobPost(id: ID! @eq): JobPost @find @can(ability: "view", model: "App\\Models\\JobPost")
+}
+
+extend type Mutation {
+  createJobPost(
+    user_id: ID!
+    title: String!
+    slug: String!
+    description: String!
+    requirements: String!
+    wage: String
+    location: String!
+    department: String!
+    employment_type: String!
+    experience_level: String
+    position: String!
+    status: String
+  ): JobPost @create @can(ability: "create", model: "App\\Models\\JobPost")
+
+  updateJobPost(
+    id: ID! @eq
+    title: String
+    slug: String
+    description: String
+    requirements: String
+    wage: String
+    location: String
+    department: String
+    employment_type: String
+    experience_level: String
+    position: String
+    status: String
+  ): JobPost @update @can(ability: "update", model: "App\\Models\\JobPost")
+
+  deleteJobPost(
+  id: ID! @eq
+  ): JobPost @delete @can(ability: "delete", model: "App\\Models\\JobPost")
+}
