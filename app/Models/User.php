@@ -39,6 +39,18 @@ class User extends Authenticatable
         'status' => UserStatus::Active->value,
     ];
 
+    // Reference for the graphQL to solve Enum to string
+    public function getRoleAttribute($value): string
+    {
+        return UserRole::from($value)->value;
+    }
+
+    // Reference for the graphQL to solve Enum to string
+    public function getStatusAttribute($value): string
+    {
+        return UserStatus::from($value)->value;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
