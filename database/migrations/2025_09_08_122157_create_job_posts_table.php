@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('department');
             $table->enum('employment_type', ['full-time', 'part-time', 'contract'])->default('full-time');
-            $table->enum('experience_level', ['entry', 'junior', 'junior/mid', 'mid', 'mid/senior', 'senior', 'lead', 'mentor'])->nullable();
+            $table->enum('experience_level', ['entry', 'junior', 'junior-mid', 'mid', 'mid-senior', 'senior', 'lead', 'mentor'])->default('entry');
             $table->enum('position', ['office', 'work-from-home', 'hybrid', 'remote', 'worldwide'])->default('office');
             $table->enum('status', ['open', 'closed', 'draft'])->default('open');
             $table->timestamps();

@@ -31,7 +31,7 @@ class JobPostFactory extends Factory
             'location' => $this->faker->city,
             'department' => ucfirst($this->faker->word),
             'employment_type' => $this->faker->randomElement(['full-time', 'part-time', 'contract']),
-            'experience_level' => $this->faker->randomElement(['entry', 'junior', 'junior/mid', 'mid', 'mid/senior', 'senior', 'lead', 'mentor']),
+            'experience_level' => $this->faker->randomElement(['entry', 'junior', 'junior-mid', 'mid', 'mid-senior', 'senior', 'lead', 'mentor']),
             'status' => $this->faker->randomElement(['open', 'closed', 'draft']),
         ];
     }
